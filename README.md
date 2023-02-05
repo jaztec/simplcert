@@ -1,3 +1,5 @@
+[![Go Reference](https://pkg.go.dev/badge/github.com/jaztec/simplcert.svg)](https://pkg.go.dev/github.com/jaztec/simplcert)
+
 # Certificate manager
 
 The certificate manager is meant to easily generate keys pairs for mTLS purposes. It will generate
