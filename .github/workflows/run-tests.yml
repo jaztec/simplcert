@@ -16,19 +16,3 @@ jobs:
           go-version: 1.19
       - name: Test Go application
         run: make test
-
-  generate-docs:
-    runs-on: ubuntu-latest
-    name: Generate documentation
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v1
-      - name: Generate GoDoc
-        uses: ktr0731/godoc-action@v0.1.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: gh-pages
