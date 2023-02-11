@@ -6,11 +6,11 @@ async fn main() -> Result<()> {
     let mut client = GreeterServiceClient::connect("server:8000").await?;
 
     let req = tonic::Request::new(GreetingRequest {
-        name: "World".into_string(),
+        name: "World".to_string(),
     });
 
     let resp = client.greet(req).await?;
-    println!("Hello {}", resp.into_inner().greeting);
+    println!("{}", resp.into_inner().greeting);
 
     Ok(())
 }

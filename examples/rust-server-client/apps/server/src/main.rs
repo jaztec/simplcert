@@ -24,7 +24,7 @@ async fn main() -> Result<()> {
 
     Server::builder()
         .add_service(service)
-        .serve(":8000".parse().unwrap())
+        .serve("0.0.0.0:8000".parse().unwrap())
         .await?;
 
     Ok(())
