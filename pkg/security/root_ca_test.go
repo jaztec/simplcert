@@ -13,7 +13,7 @@ func TestCreateRootCertificate(t *testing.T) {
 			t.Fatalf("Error creating certificate: %+v", err)
 		}
 
-		expectSize := 1127
+		expectSize := 1111
 		if len(p) != expectSize {
 			t.Errorf("Expected PEM to be of size %d but got %d", expectSize, len(p))
 		}
@@ -42,7 +42,11 @@ func TestCreateRootCertificate(t *testing.T) {
 			caRoot:    crt,
 			caPool:    p,
 		}
-		pem, key, pub, err := m.CreateNamedCert("Test", "test.org", false)
+		pem, key, pub, err := m.CreateNamedCert(CertConfig{
+			Name:     "Test",
+			Host:     "test.org",
+			IsServer: false,
+		})
 		if err != nil {
 			t.Fatalf("Error generating cert: %+v", err)
 		}

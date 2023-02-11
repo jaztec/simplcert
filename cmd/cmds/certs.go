@@ -13,17 +13,11 @@ func createCertCmd() *cli.Command {
 		Name:     "create",
 		HelpName: "create a named certificate",
 		Action: func(c *cli.Context) error {
-			p := c.String("certs_path")
+			checkVerboseFlag(c)
+
+			p := c.String("root_cert_path")
 			if p == "" {
 				return fmt.Errorf("empty path parameter")
-			}
-			n := c.String("name")
-			if n == "" {
-				return fmt.Errorf("invalid name parameter (%s)", n)
-			}
-			h := c.String("host")
-			if h == "" {
-				return fmt.Errorf("invalid host parameter (%s)", h)
 			}
 
 			m, err := security.NewManager(p)
@@ -31,7 +25,14 @@ func createCertCmd() *cli.Command {
 				return err
 			}
 
-			crt, priv, pub, err := m.CreateNamedCert(n, h, c.Bool("is_server"))
+			cfg, err := certConfigFromFlags(c)
+			if err != nil {
+				return err
+			}
+
+			printConfig(cfg)
+
+			crt, priv, pub, err := m.CreateNamedCert(cfg)
 			if err != nil {
 				return err
 			}
@@ -43,10 +44,13 @@ func createCertCmd() *cli.Command {
 			return err
 		},
 		Flags: flags(
-			nameFlag(true),
-			hostFlag(true),
-			certsPathFlag(true),
+			nameFlag(),
+			hostFlag(),
+			certsPathFlag(),
+			countryFlag(),
+			organizationFlag(),
 			isServerFlag(),
+			verboseFlag(),
 		),
 	}
 }
@@ -56,6 +60,8 @@ func verifyCertsCmd() *cli.Command {
 		Name:     "verify",
 		HelpName: "verify if all required certificates are present",
 		Action: func(c *cli.Context) error {
+			checkVerboseFlag(c)
+
 			p := c.String("certs_path")
 			if p == "" {
 				return fmt.Errorf("empty path parameter")
@@ -69,7 +75,8 @@ func verifyCertsCmd() *cli.Command {
 			return err
 		},
 		Flags: flags(
-			certsPathFlag(true),
+			certsPathFlag(),
+			verboseFlag(),
 		),
 	}
 }
@@ -79,6 +86,8 @@ func showRootCertCmd() *cli.Command {
 		Name:     "root-crt",
 		HelpName: "display the root certificate which should be used as chain verifier",
 		Action: func(c *cli.Context) error {
+			checkVerboseFlag(c)
+
 			p := c.String("certs_path")
 			if p == "" {
 				return fmt.Errorf("empty path parameter")
@@ -97,7 +106,19 @@ func showRootCertCmd() *cli.Command {
 			return nil
 		},
 		Flags: flags(
-			certsPathFlag(true),
+			certsPathFlag(),
+			verboseFlag(),
 		),
 	}
+}
+
+func printConfig(cfg security.CertConfig) {
+	log.WithFields(log.Fields{
+		"name":         cfg.Name,
+		"host":         cfg.Host,
+		"is_ca":        cfg.IsCA,
+		"is_server":    cfg.IsServer,
+		"country":      cfg.Country,
+		"organization": cfg.Organization,
+	}).Debug("Using config")
 }

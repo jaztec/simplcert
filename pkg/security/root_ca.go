@@ -125,8 +125,8 @@ func createRootCertificate() (*x509.Certificate, []byte, *rsa.PrivateKey, error)
 
 	crt, crtPem, err := createNamedCert(CertConfig{
 		Name:     "Root CA",
-		Usage:    x509.KeyUsageCertSign | x509.KeyUsageCRLSign,
-		ExtUsage: []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth, x509.ExtKeyUsageClientAuth},
+		usage:    x509.KeyUsageCertSign | x509.KeyUsageCRLSign,
+		extUsage: []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth, x509.ExtKeyUsageClientAuth},
 		IsCA:     true,
 	}, nil, &priv.PublicKey, priv)
 	if err != nil {

@@ -1,6 +1,7 @@
 package cmds
 
 import (
+	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 )
 
@@ -14,36 +15,34 @@ func flags(f ...appFlag) []cli.Flag {
 	return r
 }
 
-func certsPathFlag(required bool) appFlag {
+func certsPathFlag() appFlag {
 	return &cli.StringFlag{
-		Name:     "certs_path",
+		Name:     "root_cert_path",
 		Usage:    "pathname",
-		Required: required,
-		EnvVars:  []string{"SCM_CERTS_PATH"},
+		Required: true,
+		EnvVars:  []string{"SCM_ROOT_CERT_PATH"},
 	}
 }
 
-func nameFlag(required bool) appFlag {
+func nameFlag() appFlag {
 	return &cli.StringFlag{
-		Name:     "name",
-		Aliases:  []string{"n"},
-		Usage:    "provide name",
-		Required: required,
+		Name:    "name",
+		Aliases: []string{"n"},
+		Usage:   "provide name",
 	}
 }
 
-func hostFlag(required bool) appFlag {
+func hostFlag() appFlag {
 	return &cli.StringFlag{
-		Name:     "host",
-		Usage:    "provide host",
-		Required: required,
+		Name:  "host",
+		Usage: "provide host",
 	}
 }
 
 func isServerFlag() appFlag {
 	return &cli.BoolFlag{
 		Name:  "is_server",
-		Usage: "indicate is server",
+		Usage: "indicate if target is server",
 	}
 }
 
@@ -53,4 +52,24 @@ func verboseFlag() appFlag {
 		Aliases: []string{"v"},
 		EnvVars: []string{"SCM_VERBOSE"},
 	}
+}
+
+func countryFlag() appFlag {
+	return &cli.StringFlag{
+		Name: "country",
+	}
+}
+
+func organizationFlag() appFlag {
+	return &cli.StringFlag{
+		Name: "organization",
+	}
+}
+
+func checkVerboseFlag(c *cli.Context) {
+	l := log.InfoLevel
+	if v := c.Bool("verbose"); v {
+		l = log.DebugLevel
+	}
+	log.SetLevel(l)
 }

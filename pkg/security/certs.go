@@ -17,11 +17,14 @@ const (
 )
 
 type CertConfig struct {
-	Name     string
-	Host     string
-	Usage    x509.KeyUsage
-	ExtUsage []x509.ExtKeyUsage
-	IsCA     bool
+	Name         string
+	Host         string
+	usage        x509.KeyUsage
+	extUsage     []x509.ExtKeyUsage
+	IsCA         bool
+	IsServer     bool
+	Country      string
+	Organization string
 }
 
 func createNamedCert(cfg CertConfig, parent *x509.Certificate, pub *rsa.PublicKey, priv *rsa.PrivateKey) (*x509.Certificate, []byte, error) {
@@ -33,9 +36,8 @@ func createNamedCert(cfg CertConfig, parent *x509.Certificate, pub *rsa.PublicKe
 	template := x509.Certificate{
 		SerialNumber: big.NewInt(1),
 		Subject: pkix.Name{
-			Country:      []string{"NL"},
-			Organization: []string{"SERP"},
-			//CommonName:   cfg.Name,
+			Country:      []string{cfg.Country},
+			Organization: []string{cfg.Organization},
 		},
 
 		Extensions: []pkix.Extension{
@@ -45,8 +47,8 @@ func createNamedCert(cfg CertConfig, parent *x509.Certificate, pub *rsa.PublicKe
 		NotBefore: time.Now().Add(-10 * time.Second),
 		NotAfter:  time.Now().AddDate(10, 0, 0),
 
-		KeyUsage:    cfg.Usage,
-		ExtKeyUsage: cfg.ExtUsage,
+		KeyUsage:    cfg.usage,
+		ExtKeyUsage: cfg.extUsage,
 
 		BasicConstraintsValid: true,
 		IsCA:                  cfg.IsCA,
