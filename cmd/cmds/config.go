@@ -88,7 +88,7 @@ func certConfigFromFlags(c *cli.Context) (security.CertConfig, error) {
 	}
 	boolFlags := []promptFlag[bool]{
 		{
-			name:           "is_server",
+			name:           "is-server",
 			promptQuestion: newBoolPromptQuestion("Target is a server"),
 			setter: func(cfg *security.CertConfig, val bool) {
 				cfg.IsServer = val
