@@ -40,7 +40,7 @@ func hostFlag() appFlag {
 
 func isServerFlag() appFlag {
 	return &cli.BoolFlag{
-		Name:  "is_server",
+		Name:  "is-server",
 		Usage: "indicate if target is server",
 	}
 }

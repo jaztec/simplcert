@@ -117,8 +117,7 @@ func printConfig(cfg security.CertConfig) {
 	log.WithFields(log.Fields{
 		"name":         cfg.Name,
 		"host":         cfg.Host,
-		"is_ca":        cfg.IsCA,
-		"is_server":    cfg.IsServer,
+		"is-server":    cfg.IsServer,
 		"country":      cfg.Country,
 		"organization": cfg.Organization,
 	}).Debug("Using config")
