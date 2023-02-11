@@ -1,8 +1,8 @@
 package security
 
 import (
+	"crypto/ecdsa"
 	"crypto/rand"
-	"crypto/rsa"
 	"crypto/x509"
 	"crypto/x509/pkix"
 	"encoding/asn1"
@@ -27,7 +27,7 @@ type CertConfig struct {
 	Organization string
 }
 
-func createNamedCert(cfg CertConfig, parent *x509.Certificate, pub *rsa.PublicKey, priv *rsa.PrivateKey) (*x509.Certificate, []byte, error) {
+func createNamedCert(cfg CertConfig, parent *x509.Certificate, pub *ecdsa.PublicKey, priv *ecdsa.PrivateKey) (*x509.Certificate, []byte, error) {
 	san := pkix.Extension{}
 	san.Id = asn1.ObjectIdentifier{2, 5, 29, 17}
 	san.Critical = false
@@ -66,7 +66,7 @@ func createNamedCert(cfg CertConfig, parent *x509.Certificate, pub *rsa.PublicKe
 	return crt, crtPem, nil
 }
 
-func createCert(template, parent *x509.Certificate, pub *rsa.PublicKey, priv *rsa.PrivateKey) (*x509.Certificate, []byte, error) {
+func createCert(template, parent *x509.Certificate, pub *ecdsa.PublicKey, priv *ecdsa.PrivateKey) (*x509.Certificate, []byte, error) {
 	crtBytes, err := x509.CreateCertificate(rand.Reader, template, parent, pub, priv)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to create cert: %w", err)
@@ -85,7 +85,7 @@ func createCert(template, parent *x509.Certificate, pub *rsa.PublicKey, priv *rs
 	return crt, crtPem, nil
 }
 
-func loadPublicKey(bytes []byte) (*rsa.PublicKey, error) {
+func loadPublicKey(bytes []byte) (*ecdsa.PublicKey, error) {
 	block, _ := pem.Decode(bytes)
 	if block == nil {
 		return nil, fmt.Errorf("decoding file from %s failed", string(bytes))
@@ -96,17 +96,17 @@ func loadPublicKey(bytes []byte) (*rsa.PublicKey, error) {
 		return nil, err
 	}
 
-	return key.(*rsa.PublicKey), nil
+	return key.(*ecdsa.PublicKey), nil
 }
 
-func loadPrivateKey(bytes []byte) (*rsa.PrivateKey, error) {
+func loadPrivateKey(bytes []byte) (*ecdsa.PrivateKey, error) {
 	block, _ := pem.Decode(bytes)
 	if block == nil {
 		return nil, fmt.Errorf("decoding file from %s failed", string(bytes))
 	}
 
 	key, err := x509.ParsePKCS8PrivateKey(block.Bytes)
-	return key.(*rsa.PrivateKey), err
+	return key.(*ecdsa.PrivateKey), err
 }
 
 func loadCert(bytes []byte) (*x509.Certificate, error) {

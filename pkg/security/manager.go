@@ -1,8 +1,9 @@
 package security
 
 import (
+	"crypto/ecdsa"
+	"crypto/elliptic"
 	"crypto/rand"
-	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
 	"fmt"
@@ -10,7 +11,7 @@ import (
 
 type Manager struct {
 	certsPath string
-	caPriv    *rsa.PrivateKey
+	caPriv    *ecdsa.PrivateKey
 	caRoot    *x509.Certificate
 	caPool    *x509.CertPool
 	rootPem   []byte
@@ -26,7 +27,7 @@ func (m *Manager) RootPEM() []byte {
 
 // CreateNamedCert will return raw TLS certificate, Private key and Public key bytes
 func (m *Manager) CreateNamedCert(cfg CertConfig) (crtPem []byte, key []byte, pub []byte, err error) {
-	priv, err := rsa.GenerateKey(rand.Reader, 2048)
+	priv, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 	if err != nil {
 		return nil, nil, nil, fmt.Errorf("failed to generate key")
 	}

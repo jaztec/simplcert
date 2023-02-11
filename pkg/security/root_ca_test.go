@@ -8,18 +8,9 @@ import (
 
 func TestCreateRootCertificate(t *testing.T) {
 	t.Run("Should create a root certificate", func(t *testing.T) {
-		crt, p, k, err := createRootCertificate()
+		crt, _, _, err := createRootCertificate()
 		if err != nil {
 			t.Fatalf("Error creating certificate: %+v", err)
-		}
-
-		expectSize := 1111
-		if len(p) != expectSize {
-			t.Errorf("Expected PEM to be of size %d but got %d", expectSize, len(p))
-		}
-
-		if err := k.Validate(); err != nil {
-			t.Errorf("Private key not valid: %+v", err)
 		}
 
 		if _, err := crt.Verify(x509.VerifyOptions{
@@ -55,9 +46,7 @@ func TestCreateRootCertificate(t *testing.T) {
 		if err != nil {
 			t.Fatalf("Error loading private key: %+v", err)
 		}
-		if err := priv.Validate(); err != nil {
-			t.Errorf("Error validating private key: %+v", err)
-		}
+
 		publ, err := loadPublicKey(pub)
 		if err != nil {
 			t.Fatalf("Error loading public key: %+v", err)
