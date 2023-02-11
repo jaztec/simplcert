@@ -24,5 +24,3 @@ plugins:
     out: libs/proto/src
     opt:
       - compile_well_known_types
-      - extern_path=.google.protobuf=::pbjson_types
-      - no_client=true
