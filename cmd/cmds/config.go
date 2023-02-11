@@ -164,3 +164,18 @@ func boolParser(val string) bool {
 		return false
 	}
 }
+
+func promptRootCertPath(c *cli.Context) (string, error) {
+	v := c.String("root_cert_path")
+	if v == "" {
+		r, err := prompt[string](newStringPromptQuestion("Path to root certificate"), stringParser)
+		if err != nil {
+			return "", err
+		}
+		v = r.value
+	}
+	if v == "" {
+		return "", fmt.Errorf("flag \"%s\" is required nu no value provided", "root_cert_path")
+	}
+	return v, nil
+}
