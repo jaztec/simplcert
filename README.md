@@ -21,8 +21,9 @@ $ simplcert create --host hostname.tld --name "My server" --is_server
 
 ### Roadmap
 
-|       | Target         | Description                                                            |
-|-------|-------------------------|----------------------------------------------------------------|
-| Open  | Add more signing options | DSA, ECDSA etc.                                              |
-| Open  | Add leaf certs | Cross sign with dedicated leaf certs for server and client validations |
-| Open  | Write output to file | Add additional flag to write output to file instead of stdout | 
+| Status | Target                   | Description                                                            |
+|--------|--------------------------|------------------------------------------------------------------------|
+| Open   | Add examples             | Have an example folder displaying a working setup                      |
+| Open   | Add more signing options | RSA, DSA etc.                                                          |
+| Open   | Add leaf certs           | Cross sign with dedicated leaf certs for server and client validations |
+| Open   | Write output to file     | Add additional flag to write output to file instead of stdout          | 

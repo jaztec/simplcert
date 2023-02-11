@@ -1,8 +1,9 @@
 package security
 
 import (
+	"crypto/ecdsa"
+	"crypto/elliptic"
 	"crypto/rand"
-	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
 	"errors"
@@ -17,7 +18,7 @@ const (
 	certCAKeyFile    = rootCABaseFilename + ".crt"
 )
 
-func loadCA(certsFolder string) (*x509.Certificate, *rsa.PrivateKey, []byte, error) {
+func loadCA(certsFolder string) (*x509.Certificate, *ecdsa.PrivateKey, []byte, error) {
 	if !checkRootCAFiles(certsFolder) {
 		return nil, nil, nil, fmt.Errorf("certificates not found in %s", certsFolder)
 	}
@@ -51,7 +52,7 @@ func loadRootCACertificate(certsFolder string) (*x509.Certificate, []byte, error
 	return crt, b, nil
 }
 
-func loadRootCAPrivateKey(certsFolder string) (*rsa.PrivateKey, error) {
+func loadRootCAPrivateKey(certsFolder string) (*ecdsa.PrivateKey, error) {
 	keyPath := certsFolder + string(os.PathSeparator) + privateCAKeyFile
 
 	b, err := os.ReadFile(keyPath)
@@ -117,8 +118,8 @@ func createRootCAFiles(outPath string) (err error) {
 	return
 }
 
-func createRootCertificate() (*x509.Certificate, []byte, *rsa.PrivateKey, error) {
-	priv, err := rsa.GenerateKey(rand.Reader, 2048)
+func createRootCertificate() (*x509.Certificate, []byte, *ecdsa.PrivateKey, error) {
+	priv, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 	if err != nil {
 		return nil, nil, nil, fmt.Errorf("failed to generate key")
 	}
