@@ -14,10 +14,9 @@ func createCertCmd() *cli.Command {
 		HelpName: "create a named certificate",
 		Action: func(c *cli.Context) error {
 			checkVerboseFlag(c)
-
-			p := c.String("root_cert_path")
-			if p == "" {
-				return fmt.Errorf("empty path parameter")
+			p, err := promptRootCertPath(c)
+			if err != nil {
+				return err
 			}
 
 			m, err := security.NewManager(p)
@@ -62,16 +61,17 @@ func verifyCertsCmd() *cli.Command {
 		Action: func(c *cli.Context) error {
 			checkVerboseFlag(c)
 
-			p := c.String("certs_path")
-			if p == "" {
-				return fmt.Errorf("empty path parameter")
+			p, err := promptRootCertPath(c)
+			if err != nil {
+				return err
 			}
+
 			log.WithField("path", p).Info("Verify certificates")
 			if fi, err := os.Stat(p); err != nil || !fi.IsDir() {
 				return fmt.Errorf("invalid path parameter (%s)", p)
 			}
 
-			_, err := security.NewManager(p)
+			_, err = security.NewManager(p)
 			return err
 		},
 		Flags: flags(
@@ -88,10 +88,11 @@ func showRootCertCmd() *cli.Command {
 		Action: func(c *cli.Context) error {
 			checkVerboseFlag(c)
 
-			p := c.String("certs_path")
-			if p == "" {
-				return fmt.Errorf("empty path parameter")
+			p, err := promptRootCertPath(c)
+			if err != nil {
+				return err
 			}
+
 			if fi, err := os.Stat(p); err != nil || !fi.IsDir() {
 				return fmt.Errorf("invalid path parameter (%s)", p)
 			}

@@ -17,10 +17,9 @@ func flags(f ...appFlag) []cli.Flag {
 
 func certsPathFlag() appFlag {
 	return &cli.StringFlag{
-		Name:     "root_cert_path",
-		Usage:    "pathname",
-		Required: true,
-		EnvVars:  []string{"SCM_ROOT_CERT_PATH"},
+		Name:    "root_cert_path",
+		Usage:   "pathname",
+		EnvVars: []string{"SCM_ROOT_CERT_PATH"},
 	}
 }
 
