@@ -25,27 +25,20 @@ func (m *Manager) RootPEM() []byte {
 }
 
 // CreateNamedCert will return raw TLS certificate, Private key and Public key bytes
-func (m *Manager) CreateNamedCert(name, host string, isServer bool) (crtPem []byte, key []byte, pub []byte, err error) {
+func (m *Manager) CreateNamedCert(cfg CertConfig) (crtPem []byte, key []byte, pub []byte, err error) {
 	priv, err := rsa.GenerateKey(rand.Reader, 2048)
 	if err != nil {
 		return nil, nil, nil, fmt.Errorf("failed to generate key")
 	}
-	var ext []x509.ExtKeyUsage
-	var usg x509.KeyUsage
-	if isServer {
-		usg = x509.KeyUsageKeyEncipherment | x509.KeyUsageDigitalSignature
-		ext = []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth}
+	if cfg.IsServer {
+		cfg.usage = x509.KeyUsageKeyEncipherment | x509.KeyUsageDigitalSignature
+		cfg.extUsage = []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth}
 	} else {
-		usg = x509.KeyUsageContentCommitment
-		ext = []x509.ExtKeyUsage{x509.ExtKeyUsageClientAuth}
+		cfg.usage = x509.KeyUsageContentCommitment
+		cfg.extUsage = []x509.ExtKeyUsage{x509.ExtKeyUsageClientAuth}
 	}
 
-	crt, _, err := createNamedCert(CertConfig{
-		Name:     name,
-		Host:     host,
-		Usage:    usg,
-		ExtUsage: ext,
-	}, m.caRoot, &priv.PublicKey, m.caPriv)
+	crt, _, err := createNamedCert(cfg, m.caRoot, &priv.PublicKey, m.caPriv)
 	if err != nil {
 		return nil, nil, nil, fmt.Errorf("failed to generate security keys: %w", err)
 	}
