@@ -39,9 +39,9 @@ See [examples folder](examples) for some examples
 
 ### Roadmap
 
-| Status | Target                   | Description                                                            |
-|--------|--------------------------|------------------------------------------------------------------------|
-| Done   | Add examples             | Have an example folder displaying a working setup                      |
-| Open   | Add more signing options | RSA, DSA etc. (now only ecdsa is supported                             |
-| Open   | Add leaf certs           | Cross sign with dedicated leaf certs for server and client validations |
-| Open   | Write output to file     | Add additional flag to write output to file instead of stdout          | 
+| Status  | Target                   | Description                                                            |
+|---------|--------------------------|------------------------------------------------------------------------|
+| &check; | Add examples             | Have an example folder displaying a working setup                      |
+| Open    | Add more signing options | RSA, DSA etc. (now only ecdsa is supported                             |
+| Open    | Add leaf certs           | Cross sign with dedicated leaf certs for server and client validations |
+| &check; | Write output to file     | Add additional flag to write output to file instead of stdout          | 

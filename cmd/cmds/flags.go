@@ -17,7 +17,7 @@ func flags(f ...appFlag) []cli.Flag {
 
 func certsPathFlag() appFlag {
 	return &cli.StringFlag{
-		Name:    "root_cert_path",
+		Name:    "root-cert-path",
 		Usage:   "pathname",
 		EnvVars: []string{"SCM_ROOT_CERT_PATH"},
 	}
@@ -62,6 +62,19 @@ func countryFlag() appFlag {
 func organizationFlag() appFlag {
 	return &cli.StringFlag{
 		Name: "organization",
+	}
+}
+
+func outputPath() appFlag {
+	return &cli.StringFlag{
+		Name:    "output-path",
+		Aliases: []string{"o"},
+	}
+}
+
+func outputName() appFlag {
+	return &cli.StringFlag{
+		Name: "output-name",
 	}
 }
 

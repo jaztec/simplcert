@@ -85,6 +85,20 @@ func certConfigFromFlags(c *cli.Context) (security.CertConfig, error) {
 				cfg.Organization = val
 			},
 		},
+		{
+			name:           "output-path",
+			promptQuestion: newStringPromptQuestion("Path to write files to (will output to terminal if not provided)"),
+			setter: func(cfg *security.CertConfig, val string) {
+				cfg.OutputPath = val
+			},
+		},
+		{
+			name:           "output-name",
+			promptQuestion: newStringPromptQuestion("Name for output files (will use regular name if not provided)"),
+			setter: func(cfg *security.CertConfig, val string) {
+				cfg.OutputName = val
+			},
+		},
 	}
 	boolFlags := []promptFlag[bool]{
 		{
@@ -166,7 +180,7 @@ func boolParser(val string) bool {
 }
 
 func promptRootCertPath(c *cli.Context) (string, error) {
-	v := c.String("root_cert_path")
+	v := c.String("root-cert-path")
 	if v == "" {
 		r, err := prompt[string](newStringPromptQuestion("Path to root certificate"), stringParser)
 		if err != nil {
@@ -175,7 +189,7 @@ func promptRootCertPath(c *cli.Context) (string, error) {
 		v = r.value
 	}
 	if v == "" {
-		return "", fmt.Errorf("flag \"%s\" is required nu no value provided", "root_cert_path")
+		return "", fmt.Errorf("flag \"%s\" is required nu no value provided", "root-cert-path")
 	}
 	return v, nil
 }

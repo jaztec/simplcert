@@ -25,6 +25,8 @@ type CertConfig struct {
 	IsServer     bool
 	Country      string
 	Organization string
+	OutputPath   string
+	OutputName   string
 }
 
 func createNamedCert(cfg CertConfig, parent *x509.Certificate, pub *ecdsa.PublicKey, priv *ecdsa.PrivateKey) (*x509.Certificate, []byte, error) {
