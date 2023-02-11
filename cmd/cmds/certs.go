@@ -2,6 +2,7 @@ package cmds
 
 import (
 	"fmt"
+	"github.com/iancoleman/strcase"
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 	"gitlab.jaztec.info/certs/manager/pkg/security"
@@ -36,9 +37,15 @@ func createCertCmd() *cli.Command {
 				return err
 			}
 
-			fmt.Printf("%s\n\n", crt)
-			fmt.Printf("%s\n\n", priv)
-			fmt.Printf("%s\n\n", pub)
+			if cfg.OutputPath != "" {
+				name := cfg.OutputName
+				if name == "" {
+					name = strcase.ToKebab(cfg.Name)
+				}
+				err = outputToFile(cfg.OutputPath, name, m.RootPEM(), crt, priv, pub)
+			} else {
+				outputToScreen(crt, priv, pub)
+			}
 
 			return err
 		},
@@ -49,6 +56,8 @@ func createCertCmd() *cli.Command {
 			countryFlag(),
 			organizationFlag(),
 			isServerFlag(),
+			outputPath(),
+			outputName(),
 			verboseFlag(),
 		),
 	}
@@ -121,4 +130,27 @@ func printConfig(cfg security.CertConfig) {
 		"country":      cfg.Country,
 		"organization": cfg.Organization,
 	}).Debug("Using config")
+}
+
+func outputToScreen(crt, key, pub []byte) {
+	fmt.Printf("%s\n\n", crt)
+	fmt.Printf("%s\n\n", key)
+	fmt.Printf("%s\n\n", pub)
+}
+
+func outputToFile(path, name string, root, crt, key, pub []byte) error {
+	sep := string(os.PathSeparator)
+	if err := os.WriteFile(fmt.Sprintf("%s%s%s.crt", path, sep, "root-ca"), root, 0644); err != nil {
+		return err
+	}
+	if err := os.WriteFile(fmt.Sprintf("%s%s%s.crt", path, sep, name), crt, 0644); err != nil {
+		return err
+	}
+	if err := os.WriteFile(fmt.Sprintf("%s%s%s.key", path, sep, name), key, 0644); err != nil {
+		return err
+	}
+	if err := os.WriteFile(fmt.Sprintf("%s%s%s.pub", path, sep, name), pub, 0644); err != nil {
+		return err
+	}
+	return nil
 }
