@@ -3,7 +3,6 @@ package security
 import (
 	"crypto/ecdsa"
 	"crypto/rand"
-	"crypto/rsa"
 	"crypto/x509"
 	"crypto/x509/pkix"
 	"encoding/asn1"
@@ -86,7 +85,7 @@ func createCert(template, parent *x509.Certificate, pub *ecdsa.PublicKey, priv *
 	return crt, crtPem, nil
 }
 
-func loadPublicKey(bytes []byte) (*rsa.PublicKey, error) {
+func loadPublicKey(bytes []byte) (*ecdsa.PublicKey, error) {
 	block, _ := pem.Decode(bytes)
 	if block == nil {
 		return nil, fmt.Errorf("decoding file from %s failed", string(bytes))
@@ -97,7 +96,7 @@ func loadPublicKey(bytes []byte) (*rsa.PublicKey, error) {
 		return nil, err
 	}
 
-	return key.(*rsa.PublicKey), nil
+	return key.(*ecdsa.PublicKey), nil
 }
 
 func loadPrivateKey(bytes []byte) (*ecdsa.PrivateKey, error) {
