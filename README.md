@@ -32,10 +32,19 @@ to the name of the docker container.
 ```bash
 # create will generate a certificate signed by the root certificate. Use the flags to generate a 
 # certificate for a specific purpose.
-$ simplcert create --host hostname.tld --name "My server" --is-server
+$ simplcert create \
+  --root-cert-path /path/to/root-ca \
+  --host hostname.tld \
+  --name "My server" \
+  --is-server
 ```
 
-See [examples folder](examples) for some examples
+### Usage examples
+
+See [examples folder](examples) for some examples:
+
+- [Go server/client](examples/go-server-client)
+- [Rust server/client](examples/rust-server-client)
 
 ### Roadmap
 
