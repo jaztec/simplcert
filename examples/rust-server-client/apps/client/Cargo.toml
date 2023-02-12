@@ -1,0 +1,14 @@
+[package]
+name = "client"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+eyre = { version = "0.6" }
+tonic = { version = "0.8", features = ["tls"] }
+tokio = { version = "1.25", features = ["rt-multi-thread"] }
+
+proto = { path = "../../libs/proto" }
+common = { path = "../../libs/common" }

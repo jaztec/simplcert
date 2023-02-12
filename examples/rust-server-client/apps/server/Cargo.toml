@@ -1,0 +1,14 @@
+[package]
+name = "server"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+eyre = { version = "0.6" }
+tonic = { version = "0.8" }
+tokio = { version = "1.25", features = ["rt-multi-thread"] }
+
+common = { path = "../../libs/common" }
+proto = { path = "../../libs/proto" }
