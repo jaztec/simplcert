@@ -8,12 +8,21 @@ special root certificate for this example only.
 
 For the server
 ```bash
-$ simplcert create --name Server --host server --is-server
+$ simplcert create \
+  --root-cert-path $PWD/certs \
+  --name Server \
+  --host server \
+  --is-server \
+  --output-path $PWD/certs
 ```
 
 For the client
 ```bash
-$ simplcert create --name Client --host client --is-server
+$ simplcert create \
+  --root-cert-path $PWD/certs \
+  --name Client \
+  --host client \
+  --output-path $PWD/certs
 ```
 
 Run the example from this folder with docker-compose:

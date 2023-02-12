@@ -10,4 +10,5 @@ eyre = { version = "0.6" }
 tonic = { version = "0.8" }
 tokio = { version = "1.25", features = ["rt-multi-thread"] }
 
+common = { path = "../../libs/common" }
 proto = { path = "../../libs/proto" }
