@@ -8,6 +8,7 @@ import (
 	"crypto/x509"
 	"strings"
 	"testing"
+	"time"
 )
 
 func TestCreateRootCertificate(t *testing.T) {
@@ -65,6 +66,7 @@ func TestCreateRootCertificate(t *testing.T) {
 				Name:     "Test",
 				Host:     "test.org",
 				IsServer: false,
+				NotAfter: time.Now().Add(10 * time.Second),
 			})
 			if err != nil {
 				t.Fatalf("%s: Error generating cert: %+v", test.name, err)

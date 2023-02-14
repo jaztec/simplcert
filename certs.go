@@ -45,6 +45,7 @@ type CertConfig struct {
 	OutputPath   string
 	OutputName   string
 	CertType     CertType
+	NotAfter     time.Time
 }
 
 func createNamedCert(cfg CertConfig, parent *x509.Certificate, pub crypto.PublicKey, priv crypto.Signer) (*x509.Certificate, error) {
@@ -66,7 +67,7 @@ func createNamedCert(cfg CertConfig, parent *x509.Certificate, pub crypto.Public
 		},
 
 		NotBefore: time.Now().Add(-10 * time.Second),
-		NotAfter:  time.Now().AddDate(10, 0, 0),
+		NotAfter:  cfg.NotAfter,
 
 		KeyUsage:    cfg.usage,
 		ExtKeyUsage: cfg.extUsage,
