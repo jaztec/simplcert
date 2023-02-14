@@ -3,9 +3,9 @@ package cmds
 import (
 	"fmt"
 	"github.com/iancoleman/strcase"
+	"github.com/jaztec/simplcert"
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
-	"gitlab.jaztec.info/certs/manager"
 	"os"
 )
 
@@ -20,7 +20,7 @@ func createCertCmd() *cli.Command {
 				return err
 			}
 
-			m, err := manager.NewManager(certPath)
+			m, err := simplcert.NewManager(certPath)
 			if err != nil {
 				return err
 			}
@@ -83,7 +83,7 @@ func verifyCertsCmd() *cli.Command {
 				return fmt.Errorf("invalid path parameter (%s)", certPath)
 			}
 
-			_, err = manager.NewManager(certPath)
+			_, err = simplcert.NewManager(certPath)
 			return err
 		},
 		Flags: flags(
@@ -109,7 +109,7 @@ func showRootCertCmd() *cli.Command {
 				return fmt.Errorf("invalid path parameter (%s)", certPath)
 			}
 
-			m, err := manager.NewManager(certPath)
+			m, err := simplcert.NewManager(certPath)
 			if err != nil {
 				return err
 			}
@@ -125,7 +125,7 @@ func showRootCertCmd() *cli.Command {
 	}
 }
 
-func printConfig(cfg manager.CertConfig) {
+func printConfig(cfg simplcert.CertConfig) {
 	log.WithFields(log.Fields{
 		"name":         cfg.Name,
 		"host":         cfg.Host,
@@ -158,18 +158,18 @@ func outputToFile(path, name string, root, crt, key, pub []byte) error {
 	return nil
 }
 
-func getCertType(c *cli.Context) manager.CertType {
+func getCertType(c *cli.Context) simplcert.CertType {
 	if c.Bool("ecdsa") {
-		return manager.TypeECDSA
+		return simplcert.TypeECDSA
 	}
 
 	if c.Bool("rsa") {
-		return manager.TypeRSA
+		return simplcert.TypeRSA
 	}
 
 	if c.Bool("ed25519") {
-		return manager.TypeED25519
+		return simplcert.TypeED25519
 	}
 
-	return manager.TypeECDSA
+	return simplcert.TypeECDSA
 }

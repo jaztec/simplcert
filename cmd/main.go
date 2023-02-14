@@ -1,8 +1,8 @@
 package main
 
 import (
+	"github.com/jaztec/simplcert/cmd/cmds"
 	log "github.com/sirupsen/logrus"
-	"gitlab.jaztec.info/certs/manager/cmd/cmds"
 )
 
 var (

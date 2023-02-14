@@ -1,4 +1,4 @@
-module gitlab.jaztec.info/certs/manager
+module github.com/jaztec/simplcert
 
 go 1.19
 
