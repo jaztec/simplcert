@@ -75,6 +75,9 @@ func checkRootCAFiles(outPath string) bool {
 }
 
 func CreateRootCAFiles(certType CertType, outPath string) (err error) {
+	if certType == TypeED25519 {
+		return errors.New("at this point it is not possible to generate root ca files from ED25519")
+	}
 	log.WithField("out_path", outPath).Info("Creating root CA files")
 	crt, priv, err := createRootCertificate(certType)
 	if err != nil {

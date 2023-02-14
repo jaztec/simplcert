@@ -7,6 +7,7 @@ import (
 	"crypto/rand"
 	"crypto/x509"
 	"fmt"
+	log "github.com/sirupsen/logrus"
 )
 
 type internalError string
@@ -30,6 +31,10 @@ func (m *Manager) CaPool() *x509.CertPool {
 
 func (m *Manager) RootPEM() []byte {
 	return EncodeCertificate(m.caRoot.Raw)
+}
+
+func (m *Manager) RootCrt() *x509.Certificate {
+	return m.caRoot
 }
 
 // CreateNamedCert will return raw TLS certificate, Private key and Public key bytes
@@ -71,6 +76,7 @@ func (m *Manager) CreateNamedCert(cfg CertConfig) (crtPem []byte, key []byte, pu
 func NewManager(certsPath string) (*Manager, error) {
 	crt, priv, err := loadCA(certsPath)
 	if err != nil {
+		log.WithField("error", err).Debug("Error loading CA files")
 		return nil, fmt.Errorf("no root certificates found at %s, please generate them first: %w", certsPath, NoCertsError)
 	}
 
