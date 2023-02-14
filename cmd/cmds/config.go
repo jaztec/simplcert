@@ -52,7 +52,9 @@ type promptFlag[T string | bool] struct {
 }
 
 func certConfigFromFlags(c *cli.Context) (manager.CertConfig, error) {
-	cfg := manager.CertConfig{}
+	cfg := manager.CertConfig{
+		CertType: getCertType(c),
+	}
 
 	stringFlags := []promptFlag[string]{
 		{

@@ -78,6 +78,24 @@ func outputName() appFlag {
 	}
 }
 
+func ecdsaFlag() appFlag {
+	return &cli.BoolFlag{
+		Name: "ecdsa",
+	}
+}
+
+func rsaFlag() appFlag {
+	return &cli.BoolFlag{
+		Name: "rsa",
+	}
+}
+
+func ed25519Flag() appFlag {
+	return &cli.BoolFlag{
+		Name: "ed25519",
+	}
+}
+
 func checkVerboseFlag(c *cli.Context) {
 	l := log.InfoLevel
 	if v := c.Bool("verbose"); v {

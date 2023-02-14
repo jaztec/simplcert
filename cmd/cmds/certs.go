@@ -15,12 +15,12 @@ func createCertCmd() *cli.Command {
 		HelpName: "create a named certificate",
 		Action: func(c *cli.Context) error {
 			checkVerboseFlag(c)
-			p, err := promptRootCertPath(c)
+			certPath, err := promptRootCertPath(c)
 			if err != nil {
 				return err
 			}
 
-			m, err := manager.NewManager(p)
+			m, err := manager.NewManager(certPath)
 			if err != nil {
 				return err
 			}
@@ -59,6 +59,9 @@ func createCertCmd() *cli.Command {
 			outputPath(),
 			outputName(),
 			verboseFlag(),
+			ecdsaFlag(),
+			rsaFlag(),
+			ed25519Flag(),
 		),
 	}
 }
@@ -70,17 +73,17 @@ func verifyCertsCmd() *cli.Command {
 		Action: func(c *cli.Context) error {
 			checkVerboseFlag(c)
 
-			p, err := promptRootCertPath(c)
+			certPath, err := promptRootCertPath(c)
 			if err != nil {
 				return err
 			}
 
-			log.WithField("path", p).Info("Verify certificates")
-			if fi, err := os.Stat(p); err != nil || !fi.IsDir() {
-				return fmt.Errorf("invalid path parameter (%s)", p)
+			log.WithField("path", certPath).Info("Verify certificates")
+			if fi, err := os.Stat(certPath); err != nil || !fi.IsDir() {
+				return fmt.Errorf("invalid path parameter (%s)", certPath)
 			}
 
-			_, err = manager.NewManager(p)
+			_, err = manager.NewManager(certPath)
 			return err
 		},
 		Flags: flags(
@@ -97,16 +100,16 @@ func showRootCertCmd() *cli.Command {
 		Action: func(c *cli.Context) error {
 			checkVerboseFlag(c)
 
-			p, err := promptRootCertPath(c)
+			certPath, err := promptRootCertPath(c)
 			if err != nil {
 				return err
 			}
 
-			if fi, err := os.Stat(p); err != nil || !fi.IsDir() {
-				return fmt.Errorf("invalid path parameter (%s)", p)
+			if fi, err := os.Stat(certPath); err != nil || !fi.IsDir() {
+				return fmt.Errorf("invalid path parameter (%s)", certPath)
 			}
 
-			m, err := manager.NewManager(p)
+			m, err := manager.NewManager(certPath)
 			if err != nil {
 				return err
 			}
@@ -153,4 +156,20 @@ func outputToFile(path, name string, root, crt, key, pub []byte) error {
 		return err
 	}
 	return nil
+}
+
+func getCertType(c *cli.Context) manager.CertType {
+	if c.Bool("ecdsa") {
+		return manager.TypeECDSA
+	}
+
+	if c.Bool("rsa") {
+		return manager.TypeRSA
+	}
+
+	if c.Bool("ed25519") {
+		return manager.TypeED25519
+	}
+
+	return manager.TypeECDSA
 }
