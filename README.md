@@ -1,5 +1,3 @@
-[![Go Reference](https://pkg.go.dev/badge/github.com/jaztec/simplcert.svg)](https://pkg.go.dev/github.com/jaztec/simplcert)
-
 # Certificate manager
 
 The certificate manager is meant to easily generate keys pairs for mTLS purposes. It will generate
@@ -15,13 +13,11 @@ $ export SCM_ROOT_CERT_PATH=/path/to/directory/for/root/cert
 
 `verify` will check if the `root` certificate exists and if not, will create one 
 ```bash
-# verify will check if the certs exist and generate a root cert if necessary 
 $ simplcert verify
 ```
 
 `root-crt` will display the root certificate as PEM encoded string to the terminal.
 ```bash
-# root-crt will show the root certificate. This can be used as trusted root inside a gRPC client
 $ simplcert root-crt
 ```
 
@@ -30,8 +26,6 @@ the prompts. It is important to know the `--host` flag needs to be set to the do
 where the service will be reached. Or, if Docker is used, the `--host` flag should be set 
 to the name of the docker container.
 ```bash
-# create will generate a certificate signed by the root certificate. Use the flags to generate a 
-# certificate for a specific purpose.
 $ simplcert create \
   --root-cert-path /path/to/root-ca \
   --host hostname.tld \
