@@ -48,10 +48,23 @@ type CertConfig struct {
 	NotAfter     time.Time
 }
 
-func createNamedCert(cfg CertConfig, parent *x509.Certificate, pub crypto.PublicKey, priv crypto.Signer) (*x509.Certificate, error) {
+func createCert(template, parent *x509.Certificate, pub crypto.PublicKey, priv crypto.Signer) (*x509.Certificate, error) {
+	crtBytes, err := x509.CreateCertificate(rand.Reader, template, parent, pub, priv)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create cert: %w", err)
+	}
+
+	crt, err := x509.ParseCertificate(crtBytes)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create cert: %w", err)
+	}
+
+	return crt, nil
+}
+
+func createNamedCert(cfg CertConfig, parent *x509.Certificate, pub crypto.PublicKey, priv crypto.Signer, objectIdentifier asn1.ObjectIdentifier) (*x509.Certificate, error) {
 	san := pkix.Extension{}
-	// @todo fix this identifier https://portal.etsi.org/pnns/asn1oids
-	san.Id = asn1.ObjectIdentifier{2, 5, 29, 17}
+	san.Id = objectIdentifier
 	san.Critical = false
 	san.Value = []byte(fmt.Sprintf("CN=%s", cfg.Name))
 
@@ -85,20 +98,6 @@ func createNamedCert(cfg CertConfig, parent *x509.Certificate, pub crypto.Public
 	if err != nil {
 		return nil, fmt.Errorf("failed to generate key %w", err)
 	}
-	return crt, nil
-}
-
-func createCert(template, parent *x509.Certificate, pub crypto.PublicKey, priv crypto.Signer) (*x509.Certificate, error) {
-	crtBytes, err := x509.CreateCertificate(rand.Reader, template, parent, pub, priv)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create cert: %w", err)
-	}
-
-	crt, err := x509.ParseCertificate(crtBytes)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create cert: %w", err)
-	}
-
 	return crt, nil
 }
 
