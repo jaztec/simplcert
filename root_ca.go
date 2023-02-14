@@ -7,6 +7,7 @@ import (
 	"fmt"
 	log "github.com/sirupsen/logrus"
 	"os"
+	"time"
 )
 
 const (
@@ -121,6 +122,7 @@ func createRootCertificate(certType CertType) (*x509.Certificate, crypto.Signer,
 		usage:    x509.KeyUsageCertSign | x509.KeyUsageCRLSign,
 		extUsage: []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth, x509.ExtKeyUsageClientAuth},
 		IsCA:     true,
+		NotAfter: time.Now().AddDate(1, 0, 0),
 	}, nil, priv.Public(), priv)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to generate root key")

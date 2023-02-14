@@ -65,10 +65,16 @@ func organizationFlag() appFlag {
 	}
 }
 
-func outputPath() appFlag {
+func outputPathFlag() appFlag {
 	return &cli.StringFlag{
 		Name:    "output-path",
 		Aliases: []string{"o"},
+	}
+}
+
+func daysValidFlag() appFlag {
+	return &cli.IntFlag{
+		Name: "days-valid",
 	}
 }
 
