@@ -38,10 +38,11 @@ func createCertCmd() *cli.Command {
 				return err
 			}
 			crtBytes := simplcert.EncodeCertificate(crt.Raw)
-			privBytes, err := m.MarshalPrivateKey(priv)
+			privRaw, err := m.MarshalPrivateKey(priv)
 			if err != nil {
 				return err
 			}
+			privBytes := simplcert.EncodePrivateKey(privRaw)
 
 			if cfg.OutputPath != "" {
 				name := cfg.OutputName
@@ -62,11 +63,12 @@ func createCertCmd() *cli.Command {
 			countryFlag(),
 			organizationFlag(),
 			isServerFlag(),
-			outputPath(),
+			outputPathFlag(),
 			outputName(),
 			ecdsaFlag(),
 			rsaFlag(),
 			ed25519Flag(),
+			daysValidFlag(),
 			verboseFlag(),
 		),
 	}

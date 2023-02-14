@@ -7,7 +7,9 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 	"os"
+	"strconv"
 	"strings"
+	"time"
 )
 
 type promptDatatype int
@@ -15,12 +17,17 @@ type promptDatatype int
 const (
 	stringPrompt promptDatatype = iota
 	boolPrompt
+	intPrompt
 )
 
 type promptQuestion struct {
 	question     string
 	datatype     promptDatatype
 	defaultValue string
+}
+
+type supportedTypes interface {
+	string | bool | int
 }
 
 func newStringPromptQuestion(name string) promptQuestion {
@@ -39,11 +46,19 @@ func newBoolPromptQuestion(name string) promptQuestion {
 	}
 }
 
-type promptResult[T string | bool] struct {
+func newIntPromptQuestion(name string) promptQuestion {
+	return promptQuestion{
+		question:     name,
+		datatype:     intPrompt,
+		defaultValue: "0",
+	}
+}
+
+type promptResult[T supportedTypes] struct {
 	value T
 }
 
-type promptFlag[T string | bool] struct {
+type promptFlag[T supportedTypes] struct {
 	name           string
 	promptDatatype promptDatatype
 	promptQuestion promptQuestion
@@ -111,6 +126,18 @@ func certConfigFromFlags(c *cli.Context) (simplcert.CertConfig, error) {
 			},
 		},
 	}
+	intFlags := []promptFlag[int]{
+		{
+			name:           "days-valid",
+			promptQuestion: newIntPromptQuestion("Days the certificate must be valid (default 30)"),
+			setter: func(cfg *simplcert.CertConfig, val int) {
+				if val < 1 {
+					val = 30
+				}
+				cfg.NotAfter = time.Now().AddDate(0, 0, val)
+			},
+		},
+	}
 
 	for _, flag := range stringFlags {
 		v := c.String(flag.name)
@@ -139,16 +166,30 @@ func certConfigFromFlags(c *cli.Context) (simplcert.CertConfig, error) {
 		flag.setter(&cfg, v)
 	}
 
+	for _, flag := range intFlags {
+		v := c.Int(flag.name)
+		if v == 0 {
+			r, err := prompt[int](flag.promptQuestion, intParser)
+			if err != nil {
+				return cfg, err
+			}
+			v = r.value
+		}
+		flag.setter(&cfg, v)
+	}
+
 	return cfg, nil
 }
 
-func prompt[T string | bool](q promptQuestion, parser func(val string) T) (promptResult[T], error) {
+func prompt[T supportedTypes](q promptQuestion, parser func(val string) T) (promptResult[T], error) {
 	var base T
 
 	switch q.datatype {
 	case boolPrompt:
 		fmt.Printf("%s [y/N]: ", q.question)
 	case stringPrompt:
+		fallthrough
+	case intPrompt:
 		fmt.Printf("%s: ", q.question)
 	}
 
@@ -179,6 +220,14 @@ func boolParser(val string) bool {
 	default:
 		return false
 	}
+}
+func intParser(val string) int {
+	i, err := strconv.Atoi(val)
+	if err != nil {
+		log.WithField("error", err).Debug("Error parsing int value")
+		return 0
+	}
+	return i
 }
 
 func promptRootCertPath(c *cli.Context) (string, error) {

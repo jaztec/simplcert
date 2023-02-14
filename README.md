@@ -36,6 +36,8 @@ $ simplcert create \
   --root-cert-path /path/to/root-ca \
   --host hostname.tld \
   --name "My server" \
+  --days-valid 30 \
+  --ecdsa \
   --is-server
 ```
 
