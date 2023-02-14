@@ -8,6 +8,8 @@ import (
 	"crypto/x509"
 	"fmt"
 	log "github.com/sirupsen/logrus"
+	math_rand "math/rand"
+	"time"
 )
 
 type internalError string
@@ -51,7 +53,13 @@ func (m *Manager) CreateNamedCert(cfg CertConfig) (*x509.Certificate, crypto.Sig
 		cfg.extUsage = []x509.ExtKeyUsage{x509.ExtKeyUsageClientAuth}
 	}
 
-	crt, err := createNamedCert(cfg, m.caRoot, &priv.PublicKey, m.caPriv)
+	math_rand.Seed(time.Now().UnixMilli())
+	identifier := baseIdentifier
+	for i := 0; i < 3; i++ {
+		identifier = append(identifier, math_rand.Intn(32))
+	}
+
+	crt, err := createNamedCert(cfg, m.caRoot, &priv.PublicKey, m.caPriv, identifier)
 	if err != nil {
 		return nil, nil, nil, fmt.Errorf("failed to generate security keys: %w", err)
 	}

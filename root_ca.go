@@ -16,6 +16,8 @@ const (
 	certCAKeyFile    = rootCABaseFilename + ".crt"
 )
 
+var baseIdentifier = []int{1, 0, 9652}
+
 func loadCA(certsFolder string) (*x509.Certificate, crypto.Signer, error) {
 	if !checkRootCAFiles(certsFolder) {
 		return nil, nil, fmt.Errorf("certificates not found in %s", certsFolder)
@@ -123,7 +125,7 @@ func createRootCertificate(certType CertType) (*x509.Certificate, crypto.Signer,
 		extUsage: []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth, x509.ExtKeyUsageClientAuth},
 		IsCA:     true,
 		NotAfter: time.Now().AddDate(1, 0, 0),
-	}, nil, priv.Public(), priv)
+	}, nil, priv.Public(), priv, baseIdentifier)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to generate root key")
 	}
