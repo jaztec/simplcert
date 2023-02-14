@@ -51,7 +51,7 @@ See [examples folder](examples) for some examples:
 | Status  | Target                   | Description                                                            |
 |---------|--------------------------|------------------------------------------------------------------------|
 | &check; | Add examples             | Have an example folder displaying a working setup                      |
-| Open    | Add more signing options | RSA, DSA etc. (now only ecdsa is supported                             |
-| Open    | Add leaf certs           | Cross sign with dedicated leaf certs for server and client validations |
+| &check; | Add more signing options | RSA, DSA etc. (now only ecdsa is supported                             |
 | &check; | Write output to file     | Add additional flag to write output to file instead of stdout          | 
 | &check; | Add Rust example         | Add an example on how to use the certs in a Rust gRPC application      |
+| Open    | Add leaf certs           | Cross sign with dedicated leaf certs for server and client validations |

@@ -3,9 +3,9 @@ package cmds
 import (
 	"bufio"
 	"fmt"
+	"github.com/jaztec/simplcert"
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
-	"gitlab.jaztec.info/certs/manager/pkg/security"
 	"os"
 	"strings"
 )
@@ -47,19 +47,21 @@ type promptFlag[T string | bool] struct {
 	name           string
 	promptDatatype promptDatatype
 	promptQuestion promptQuestion
-	setter         func(config *security.CertConfig, val T)
+	setter         func(config *simplcert.CertConfig, val T)
 	required       bool
 }
 
-func certConfigFromFlags(c *cli.Context) (security.CertConfig, error) {
-	cfg := security.CertConfig{}
+func certConfigFromFlags(c *cli.Context) (simplcert.CertConfig, error) {
+	cfg := simplcert.CertConfig{
+		CertType: getCertType(c),
+	}
 
 	stringFlags := []promptFlag[string]{
 		{
 			name:           "name",
 			promptQuestion: newStringPromptQuestion("Name"),
 			required:       true,
-			setter: func(cfg *security.CertConfig, val string) {
+			setter: func(cfg *simplcert.CertConfig, val string) {
 				cfg.Name = val
 			},
 		},
@@ -67,35 +69,35 @@ func certConfigFromFlags(c *cli.Context) (security.CertConfig, error) {
 			name:           "host",
 			promptQuestion: newStringPromptQuestion("Host"),
 			required:       true,
-			setter: func(cfg *security.CertConfig, val string) {
+			setter: func(cfg *simplcert.CertConfig, val string) {
 				cfg.Host = val
 			},
 		},
 		{
 			name:           "country",
 			promptQuestion: newStringPromptQuestion("Country"),
-			setter: func(cfg *security.CertConfig, val string) {
+			setter: func(cfg *simplcert.CertConfig, val string) {
 				cfg.Country = val
 			},
 		},
 		{
 			name:           "organization",
 			promptQuestion: newStringPromptQuestion("Organization"),
-			setter: func(cfg *security.CertConfig, val string) {
+			setter: func(cfg *simplcert.CertConfig, val string) {
 				cfg.Organization = val
 			},
 		},
 		{
 			name:           "output-path",
 			promptQuestion: newStringPromptQuestion("Path to write files to (will output to terminal if not provided)"),
-			setter: func(cfg *security.CertConfig, val string) {
+			setter: func(cfg *simplcert.CertConfig, val string) {
 				cfg.OutputPath = val
 			},
 		},
 		{
 			name:           "output-name",
 			promptQuestion: newStringPromptQuestion("Name for output files (will use regular name if not provided)"),
-			setter: func(cfg *security.CertConfig, val string) {
+			setter: func(cfg *simplcert.CertConfig, val string) {
 				cfg.OutputName = val
 			},
 		},
@@ -104,7 +106,7 @@ func certConfigFromFlags(c *cli.Context) (security.CertConfig, error) {
 		{
 			name:           "is-server",
 			promptQuestion: newBoolPromptQuestion("Target is a server"),
-			setter: func(cfg *security.CertConfig, val bool) {
+			setter: func(cfg *simplcert.CertConfig, val bool) {
 				cfg.IsServer = val
 			},
 		},

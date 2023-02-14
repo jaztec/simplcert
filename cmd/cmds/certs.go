@@ -1,11 +1,12 @@
 package cmds
 
 import (
+	"errors"
 	"fmt"
 	"github.com/iancoleman/strcase"
+	"github.com/jaztec/simplcert"
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
-	"gitlab.jaztec.info/certs/manager/pkg/security"
 	"os"
 )
 
@@ -15,12 +16,12 @@ func createCertCmd() *cli.Command {
 		HelpName: "create a named certificate",
 		Action: func(c *cli.Context) error {
 			checkVerboseFlag(c)
-			p, err := promptRootCertPath(c)
+			certPath, err := promptRootCertPath(c)
 			if err != nil {
 				return err
 			}
 
-			m, err := security.NewManager(p)
+			m, err := simplcert.NewManager(certPath)
 			if err != nil {
 				return err
 			}
@@ -58,6 +59,9 @@ func createCertCmd() *cli.Command {
 			isServerFlag(),
 			outputPath(),
 			outputName(),
+			ecdsaFlag(),
+			rsaFlag(),
+			ed25519Flag(),
 			verboseFlag(),
 		),
 	}
@@ -70,21 +74,27 @@ func verifyCertsCmd() *cli.Command {
 		Action: func(c *cli.Context) error {
 			checkVerboseFlag(c)
 
-			p, err := promptRootCertPath(c)
+			certPath, err := promptRootCertPath(c)
 			if err != nil {
 				return err
 			}
 
-			log.WithField("path", p).Info("Verify certificates")
-			if fi, err := os.Stat(p); err != nil || !fi.IsDir() {
-				return fmt.Errorf("invalid path parameter (%s)", p)
+			log.WithField("path", certPath).Info("Verify certificates")
+			if fi, err := os.Stat(certPath); err != nil || !fi.IsDir() {
+				return fmt.Errorf("invalid path parameter (%s)", certPath)
 			}
 
-			_, err = security.NewManager(p)
-			return err
+			if _, err = simplcert.NewManager(certPath); errors.Is(err, simplcert.NoCertsError) {
+				return simplcert.CreateRootCAFiles(getCertType(c), certPath)
+			}
+
+			return nil
 		},
 		Flags: flags(
 			certsPathFlag(),
+			ecdsaFlag(),
+			rsaFlag(),
+			ed25519Flag(),
 			verboseFlag(),
 		),
 	}
@@ -97,16 +107,16 @@ func showRootCertCmd() *cli.Command {
 		Action: func(c *cli.Context) error {
 			checkVerboseFlag(c)
 
-			p, err := promptRootCertPath(c)
+			certPath, err := promptRootCertPath(c)
 			if err != nil {
 				return err
 			}
 
-			if fi, err := os.Stat(p); err != nil || !fi.IsDir() {
-				return fmt.Errorf("invalid path parameter (%s)", p)
+			if fi, err := os.Stat(certPath); err != nil || !fi.IsDir() {
+				return fmt.Errorf("invalid path parameter (%s)", certPath)
 			}
 
-			m, err := security.NewManager(p)
+			m, err := simplcert.NewManager(certPath)
 			if err != nil {
 				return err
 			}
@@ -122,7 +132,7 @@ func showRootCertCmd() *cli.Command {
 	}
 }
 
-func printConfig(cfg security.CertConfig) {
+func printConfig(cfg simplcert.CertConfig) {
 	log.WithFields(log.Fields{
 		"name":         cfg.Name,
 		"host":         cfg.Host,
@@ -153,4 +163,20 @@ func outputToFile(path, name string, root, crt, key, pub []byte) error {
 		return err
 	}
 	return nil
+}
+
+func getCertType(c *cli.Context) simplcert.CertType {
+	if c.Bool("ecdsa") {
+		return simplcert.TypeECDSA
+	}
+
+	if c.Bool("rsa") {
+		return simplcert.TypeRSA
+	}
+
+	if c.Bool("ed25519") {
+		return simplcert.TypeED25519
+	}
+
+	return simplcert.TypeECDSA
 }
