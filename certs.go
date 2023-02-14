@@ -49,6 +49,7 @@ type CertConfig struct {
 
 func createNamedCert(cfg CertConfig, parent *x509.Certificate, pub crypto.PublicKey, priv crypto.Signer) (*x509.Certificate, error) {
 	san := pkix.Extension{}
+	// @todo fix this identifier https://portal.etsi.org/pnns/asn1oids
 	san.Id = asn1.ObjectIdentifier{2, 5, 29, 17}
 	san.Critical = false
 	san.Value = []byte(fmt.Sprintf("CN=%s", cfg.Name))
