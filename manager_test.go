@@ -1,10 +1,12 @@
 package simplcert_test
 
 import (
+	"crypto/x509"
 	"errors"
 	"github.com/jaztec/simplcert"
 	"os"
 	"testing"
+	"time"
 )
 
 func createTestDirectory(name string, t *testing.T) string {
@@ -17,6 +19,36 @@ func createTestDirectory(name string, t *testing.T) string {
 		t.Fatalf("%s: Cannot create work dir: %+v", name, err)
 	}
 	return outPath
+}
+
+func certConfig(certType simplcert.CertType, isServer bool) simplcert.CertConfig {
+	return simplcert.CertConfig{
+		Name:     "Test",
+		Host:     "test.org",
+		IsServer: isServer,
+		CertType: certType,
+		NotAfter: time.Now().AddDate(0, 0, 1),
+	}
+}
+
+func runGenerateCertTest(m *simplcert.Manager, name string, certType simplcert.CertType, isServer bool, t *testing.T) {
+	crt, _, _, err := m.CreateNamedCert(certConfig(certType, isServer))
+	if err != nil {
+		t.Fatalf("%s (server %t): Error creating named certificate: %+v", name, isServer, err)
+	}
+	var keyUsage []x509.ExtKeyUsage
+	if isServer {
+		keyUsage = []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth}
+	} else {
+		keyUsage = []x509.ExtKeyUsage{x509.ExtKeyUsageClientAuth}
+	}
+	if _, err := crt.Verify(x509.VerifyOptions{
+		DNSName:   "test.org",
+		KeyUsages: keyUsage,
+		Roots:     m.CaPool(),
+	}); err != nil {
+		t.Errorf("%s (server %t): Error validating cert: %+v", name, isServer, err)
+	}
 }
 
 func TestManagerFunctions(t *testing.T) {
@@ -57,7 +89,8 @@ func TestManagerFunctions(t *testing.T) {
 		if m.RootCrt() == nil {
 			t.Errorf("%s: The root cert of the manager cannot be nil", test.name)
 		}
-
+		runGenerateCertTest(m, test.name, test.certType, true, t)
+		runGenerateCertTest(m, test.name, test.certType, false, t)
 		if err := os.RemoveAll(outPath); err != nil {
 			t.Fatalf("%s: Cannot remove work dir: %+v", test.name, err)
 		}
