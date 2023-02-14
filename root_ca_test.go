@@ -6,6 +6,7 @@ import (
 	"crypto/ed25519"
 	"crypto/rsa"
 	"crypto/x509"
+	"os"
 	"strings"
 	"testing"
 	"time"
@@ -106,6 +107,38 @@ func TestCreateRootCertificate(t *testing.T) {
 	})
 }
 
+func TestCreateRootFiles(t *testing.T) {
+	tests := []struct {
+		name     string
+		certType CertType
+	}{
+		{"Test ECDSA", TypeECDSA},
+		{"Test RSA", TypeRSA},
+		{"Test ED25519", TypeED25519},
+	}
+	for _, test := range tests {
+		cwd, err := os.Getwd()
+		if err != nil {
+			t.Fatalf("%s: Cannot get work dir: %+v", test.name, err)
+		}
+		outPath := cwd + string(os.PathSeparator) + "tmp"
+		if err := os.Mkdir(outPath, 0777); err != nil {
+			t.Fatalf("%s: Cannot create work dir: %+v", test.name, err)
+		}
+
+		if err := CreateRootCAFiles(test.certType, outPath); err != nil {
+			t.Errorf("%s: Error creating root ca files: %+v", test.name, err)
+		}
+		if _, _, err := loadCA(outPath); err != nil {
+			t.Errorf("%s: Error loading root ca files: %+v", test.name, err)
+		}
+
+		if err := os.RemoveAll(outPath); err != nil {
+			t.Fatalf("%s: Cannot remove work dir: %+v", test.name, err)
+		}
+	}
+}
+
 // Promise from `crypto` library:
 //
 // PublicKey represents a public key using an unspecified algorithm.
@@ -131,8 +164,4 @@ func publicKeyEquals(public crypto.PublicKey, other crypto.PublicKey) bool {
 		return p.Equal(other)
 	}
 	return false
-}
-
-type EqualKey interface {
-	Equal(x crypto.PublicKey) bool
 }

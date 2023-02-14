@@ -138,8 +138,8 @@ func loadPrivateKey(pemBytes []byte) (crypto.Signer, error) {
 		return key.(*ecdsa.PrivateKey), err
 	case *rsa.PrivateKey:
 		return key.(*rsa.PrivateKey), err
-	case *ed25519.PrivateKey:
-		return key.(*ed25519.PrivateKey), err
+	case ed25519.PrivateKey:
+		return key.(ed25519.PrivateKey), err
 	}
 	return nil, fmt.Errorf("cert type %T is not a valid type", key)
 }
