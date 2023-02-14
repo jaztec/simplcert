@@ -2,9 +2,6 @@ package simplcert
 
 import (
 	"crypto"
-	"crypto/ecdsa"
-	"crypto/elliptic"
-	"crypto/rand"
 	"crypto/x509"
 	"fmt"
 	log "github.com/sirupsen/logrus"
@@ -41,7 +38,7 @@ func (m *Manager) RootCrt() *x509.Certificate {
 
 // CreateNamedCert will return raw TLS certificate, Private key and Public key bytes
 func (m *Manager) CreateNamedCert(cfg CertConfig) (*x509.Certificate, crypto.Signer, []byte, error) {
-	priv, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+	priv, err := createKey(cfg.CertType)
 	if err != nil {
 		return nil, nil, nil, fmt.Errorf("failed to generate key")
 	}
@@ -59,12 +56,12 @@ func (m *Manager) CreateNamedCert(cfg CertConfig) (*x509.Certificate, crypto.Sig
 		identifier = append(identifier, math_rand.Intn(32))
 	}
 
-	crt, err := createNamedCert(cfg, m.caRoot, &priv.PublicKey, m.caPriv, identifier)
+	crt, err := createNamedCert(cfg, m.caRoot, priv.Public(), m.caPriv, identifier)
 	if err != nil {
 		return nil, nil, nil, fmt.Errorf("failed to generate security keys: %w", err)
 	}
 
-	p, err := x509.MarshalPKIXPublicKey(&priv.PublicKey)
+	p, err := x509.MarshalPKIXPublicKey(priv.Public())
 	if err != nil {
 		return nil, nil, nil, fmt.Errorf("failed to generate security keys: %w", err)
 	}
