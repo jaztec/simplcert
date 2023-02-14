@@ -61,7 +61,7 @@ func TestCreateRootCertificate(t *testing.T) {
 				caRoot:    crt,
 				caPool:    p,
 			}
-			pem, key, pub, err := m.CreateNamedCert(CertConfig{
+			cert, key, pub, err := m.CreateNamedCert(CertConfig{
 				Name:     "Test",
 				Host:     "test.org",
 				IsServer: false,
@@ -70,7 +70,11 @@ func TestCreateRootCertificate(t *testing.T) {
 				t.Fatalf("%s: Error generating cert: %+v", test.name, err)
 			}
 
-			priv, err = loadPrivateKey(key)
+			marshaled, err := m.MarshalPrivateKey(key)
+			if err != nil {
+				t.Fatalf("%s: Error marshaling private key: %s", test.name, err)
+			}
+			priv, err = loadPrivateKey(EncodePrivateKey(marshaled))
 			if err != nil {
 				t.Fatalf("%s: Error loading private key: %+v", test.name, err)
 			}
@@ -84,11 +88,11 @@ func TestCreateRootCertificate(t *testing.T) {
 				t.Errorf("%s: Error validating public key equals that of private", test.name)
 			}
 
-			cert, err := loadCert(pem)
+			retry, err := loadCert(EncodeCertificate(cert.Raw))
 			if err != nil {
 				t.Fatalf("%s: Error loading cert: %+v", test.name, err)
 			}
-			if _, err := cert.Verify(x509.VerifyOptions{
+			if _, err := retry.Verify(x509.VerifyOptions{
 				DNSName:   "test.org",
 				KeyUsages: []x509.ExtKeyUsage{x509.ExtKeyUsageClientAuth},
 				Roots:     m.CaPool(),

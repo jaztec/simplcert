@@ -38,7 +38,7 @@ func (m *Manager) RootCrt() *x509.Certificate {
 }
 
 // CreateNamedCert will return raw TLS certificate, Private key and Public key bytes
-func (m *Manager) CreateNamedCert(cfg CertConfig) (crtPem []byte, key []byte, pub []byte, err error) {
+func (m *Manager) CreateNamedCert(cfg CertConfig) (*x509.Certificate, crypto.Signer, []byte, error) {
 	priv, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 	if err != nil {
 		return nil, nil, nil, fmt.Errorf("failed to generate key")
@@ -56,21 +56,21 @@ func (m *Manager) CreateNamedCert(cfg CertConfig) (crtPem []byte, key []byte, pu
 		return nil, nil, nil, fmt.Errorf("failed to generate security keys: %w", err)
 	}
 
-	b, err := x509.MarshalPKCS8PrivateKey(priv)
-	if err != nil {
-		return nil, nil, nil, fmt.Errorf("failed to generate security keys: %w", err)
-	}
-	key = EncodePrivateKey(b)
-
 	p, err := x509.MarshalPKIXPublicKey(&priv.PublicKey)
 	if err != nil {
 		return nil, nil, nil, fmt.Errorf("failed to generate security keys: %w", err)
 	}
-	pub = EncodePublicKey(p)
+	pub := EncodePublicKey(p)
 
-	crtPem = EncodeCertificate(crt.Raw)
+	return crt, priv, pub, nil
+}
 
-	return crtPem, key, pub, nil
+func (m *Manager) MarshalPrivateKey(key crypto.PrivateKey) ([]byte, error) {
+	b, err := x509.MarshalPKCS8PrivateKey(key)
+	if err != nil {
+		return nil, fmt.Errorf("failed to generate security keys: %w", err)
+	}
+	return b, nil
 }
 
 func NewManager(certsPath string) (*Manager, error) {

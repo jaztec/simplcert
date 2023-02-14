@@ -37,15 +37,20 @@ func createCertCmd() *cli.Command {
 			if err != nil {
 				return err
 			}
+			crtBytes := simplcert.EncodeCertificate(crt.Raw)
+			privBytes, err := m.MarshalPrivateKey(priv)
+			if err != nil {
+				return err
+			}
 
 			if cfg.OutputPath != "" {
 				name := cfg.OutputName
 				if name == "" {
 					name = strcase.ToKebab(cfg.Name)
 				}
-				err = outputToFile(cfg.OutputPath, name, m.RootPEM(), crt, priv, pub)
+				err = outputToFile(cfg.OutputPath, name, m.RootPEM(), crtBytes, privBytes, pub)
 			} else {
-				outputToScreen(crt, priv, pub)
+				outputToScreen(crtBytes, privBytes, pub)
 			}
 
 			return err
