@@ -5,7 +5,7 @@ import (
 	"github.com/iancoleman/strcase"
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
-	"gitlab.jaztec.info/certs/manager/pkg/security"
+	"gitlab.jaztec.info/certs/manager"
 	"os"
 )
 
@@ -20,7 +20,7 @@ func createCertCmd() *cli.Command {
 				return err
 			}
 
-			m, err := security.NewManager(p)
+			m, err := manager.NewManager(p)
 			if err != nil {
 				return err
 			}
@@ -80,7 +80,7 @@ func verifyCertsCmd() *cli.Command {
 				return fmt.Errorf("invalid path parameter (%s)", p)
 			}
 
-			_, err = security.NewManager(p)
+			_, err = manager.NewManager(p)
 			return err
 		},
 		Flags: flags(
@@ -106,7 +106,7 @@ func showRootCertCmd() *cli.Command {
 				return fmt.Errorf("invalid path parameter (%s)", p)
 			}
 
-			m, err := security.NewManager(p)
+			m, err := manager.NewManager(p)
 			if err != nil {
 				return err
 			}
@@ -122,7 +122,7 @@ func showRootCertCmd() *cli.Command {
 	}
 }
 
-func printConfig(cfg security.CertConfig) {
+func printConfig(cfg manager.CertConfig) {
 	log.WithFields(log.Fields{
 		"name":         cfg.Name,
 		"host":         cfg.Host,
