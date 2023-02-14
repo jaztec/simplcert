@@ -74,7 +74,7 @@ func checkRootCAFiles(outPath string) bool {
 	return true
 }
 
-func createRootCAFiles(certType CertType, outPath string) (err error) {
+func CreateRootCAFiles(certType CertType, outPath string) (err error) {
 	log.WithField("out_path", outPath).Info("Creating root CA files")
 	crt, priv, err := createRootCertificate(certType)
 	if err != nil {

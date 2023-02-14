@@ -1,6 +1,7 @@
 package cmds
 
 import (
+	"errors"
 	"fmt"
 	"github.com/iancoleman/strcase"
 	"github.com/jaztec/simplcert"
@@ -58,10 +59,10 @@ func createCertCmd() *cli.Command {
 			isServerFlag(),
 			outputPath(),
 			outputName(),
-			verboseFlag(),
 			ecdsaFlag(),
 			rsaFlag(),
 			ed25519Flag(),
+			verboseFlag(),
 		),
 	}
 }
@@ -83,11 +84,17 @@ func verifyCertsCmd() *cli.Command {
 				return fmt.Errorf("invalid path parameter (%s)", certPath)
 			}
 
-			_, err = simplcert.NewManager(certPath)
-			return err
+			if _, err = simplcert.NewManager(certPath); errors.Is(err, simplcert.NoCertsError) {
+				return simplcert.CreateRootCAFiles(getCertType(c), certPath)
+			}
+
+			return nil
 		},
 		Flags: flags(
 			certsPathFlag(),
+			ecdsaFlag(),
+			rsaFlag(),
+			ed25519Flag(),
 			verboseFlag(),
 		),
 	}
