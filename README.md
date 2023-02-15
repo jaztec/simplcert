@@ -1,4 +1,4 @@
-# Certificate manager
+# SimplCERT
 
 The certificate manager is meant to easily generate keys pairs for mTLS purposes. It will generate
 it's own root certificate and use that to sign server and client certificates that can later be used
