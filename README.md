@@ -1,4 +1,5 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/jaztec/simplcert)](https://goreportcard.com/report/github.com/jaztec/simplcert)
+![Status](https://github.com/jaztec/simplcert/actions/workflows/run-tests.yml/badge.svg)
 
 # SimplCERT
 
