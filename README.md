@@ -1,3 +1,5 @@
+[![Go Report Card](https://goreportcard.com/badge/github.com/jaztec/simplcert)](https://goreportcard.com/report/github.com/jaztec/simplcert)
+
 # SimplCERT
 
 The certificate manager is meant to easily generate keys pairs for mTLS purposes. It will generate
