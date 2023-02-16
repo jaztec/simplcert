@@ -1,4 +1,4 @@
-name: Test Cert Manager
+name: Test SimplCert
 
 on: push
 
