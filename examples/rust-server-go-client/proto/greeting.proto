@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+option go_package = "examples/rust-server-go-client/client/proto";
+
+service GreeterService {
+  rpc Greet(GreetingRequest) returns (GreetingResponse) {}
+}
+
+message GreetingRequest {
+  string name = 1;
+}
+
+message GreetingResponse {
+  string greeting = 1;
+}

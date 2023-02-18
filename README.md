@@ -47,6 +47,7 @@ See [examples folder](examples) for some examples:
 
 - [Go server/client](examples/go-server-client)
 - [Rust server/client](examples/rust-server-client)
+- [Rust server with Go client](examples/rust-server-go-client)
 
 ### Roadmap
 
