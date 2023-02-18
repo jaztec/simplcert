@@ -27,7 +27,10 @@ $ simplcert root-crt
 `create` will create a certificate. You can use CLI flags or just run create and fill in 
 the prompts. It is important to know the `--host` flag needs to be set to the domain name 
 where the service will be reached. Or, if Docker is used, the `--host` flag should be set 
-to the name of the docker container.
+to the name of the docker container. If you need to support multiple hosts or add IP 
+addresses this is supported. Just use comma's to separate the values like 
+`--host "127.0.0.1,::1,localhost,hostname.tld"`
+The command will give some additional prompts to clarify any values that are not provided.
 ```bash
 $ simplcert create \
   --root-cert-path /path/to/root-ca \
