@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 eyre = { version = "0.6" }
-tonic = { version = "0.8" }
+tonic = { version = "0.8", features = ["tls"] }
 tokio = { version = "1.25", features = ["rt-multi-thread"] }
 
 common = { path = "../../libs/common" }
