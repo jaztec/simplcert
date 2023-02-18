@@ -24,7 +24,7 @@ func createTestDirectory(name string, t *testing.T) string {
 func certConfig(certType simplcert.CertType, isServer bool) simplcert.CertConfig {
 	return simplcert.CertConfig{
 		Name:     "Test",
-		Host:     "test.org",
+		Host:     "test.org, , 127.0.0.1, ::1,",
 		IsServer: isServer,
 		CertType: certType,
 		NotAfter: time.Now().AddDate(0, 0, 1),

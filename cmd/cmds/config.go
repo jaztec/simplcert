@@ -82,7 +82,7 @@ func certConfigFromFlags(c *cli.Context) (simplcert.CertConfig, error) {
 		},
 		{
 			name:           "host",
-			promptQuestion: newStringPromptQuestion("Host"),
+			promptQuestion: newStringPromptQuestion("Hostname or IP. Comma separated for multiple"),
 			required:       true,
 			setter: func(cfg *simplcert.CertConfig, val string) {
 				cfg.Host = val
