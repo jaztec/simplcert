@@ -71,7 +71,7 @@ func createNamedCert(cfg CertConfig, parent *x509.Certificate, pub crypto.Public
 	san.Value = []byte(fmt.Sprintf("CN=%s", cfg.Name))
 
 	template := x509.Certificate{
-		SerialNumber: big.NewInt(1),
+		SerialNumber: big.NewInt(time.Now().UnixMilli()),
 		Subject: pkix.Name{
 			Country:      []string{cfg.Country},
 			Organization: []string{cfg.Organization},
