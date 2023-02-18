@@ -159,8 +159,8 @@ func publicKeyEquals(public crypto.PublicKey, other crypto.PublicKey) bool {
 	case *ecdsa.PublicKey:
 		p := public.(*ecdsa.PublicKey)
 		return p.Equal(other)
-	case *ed25519.PublicKey:
-		p := public.(*ed25519.PublicKey)
+	case ed25519.PublicKey:
+		p := public.(ed25519.PublicKey)
 		return p.Equal(other)
 	}
 	return false

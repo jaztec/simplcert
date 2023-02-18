@@ -134,8 +134,8 @@ func loadPublicKey(pemBytes []byte) (crypto.PublicKey, error) {
 		return key.(*ecdsa.PublicKey), err
 	case *rsa.PublicKey:
 		return key.(*rsa.PublicKey), err
-	case *ed25519.PublicKey:
-		return key.(*ed25519.PublicKey), err
+	case ed25519.PublicKey:
+		return key.(ed25519.PublicKey), err
 	}
 	return nil, fmt.Errorf("cert type %T is not a valid type", key)
 }
