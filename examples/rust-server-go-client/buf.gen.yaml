@@ -24,11 +24,11 @@ plugins:
   - remote: buf.build/prost/plugins/serde:v0.2.1-1
     out: server/libs/proto/src
 
-#  - name: prost-crate
-#    out: server/libs/proto
-#    strategy: all
-#    opt:
-#      - gen_crate=server/libs/proto/Cargo.toml.tpl
+  - name: prost-crate
+    out: server/libs/proto
+    strategy: all
+    opt:
+      - gen_crate=server/libs/proto/Cargo.toml.tpl
 
   - remote: buf.build/prost/plugins/tonic:v0.2.1-1
     out: server/libs/proto/src
