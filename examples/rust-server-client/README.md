@@ -13,7 +13,9 @@ $ simplcert create \
   --name Server \
   --host server \
   --is-server \
-  --output-path $PWD/certs
+  --days-valid 365 \
+  --output-path $PWD/certs \
+  --output-name client
 ```
 
 For the client
@@ -22,7 +24,9 @@ $ simplcert create \
   --root-cert-path $PWD/certs \
   --name Client \
   --host client \
-  --output-path $PWD/certs
+  --days-valid 365 \
+  --output-path $PWD/certs \
+  --output-name client
 ```
 
 Run the example from this folder with docker-compose:
