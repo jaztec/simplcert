@@ -34,7 +34,7 @@ func nameFlag() appFlag {
 func hostFlag() appFlag {
 	return &cli.StringFlag{
 		Name:  "host",
-		Usage: "provide host",
+		Usage: "provide host, comma separated for multiple inputs. IP addresses allowed",
 	}
 }
 

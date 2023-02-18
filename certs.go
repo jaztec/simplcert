@@ -13,6 +13,8 @@ import (
 	"encoding/pem"
 	"fmt"
 	"math/big"
+	"net"
+	"strings"
 	"time"
 )
 
@@ -89,7 +91,22 @@ func createNamedCert(cfg CertConfig, parent *x509.Certificate, pub crypto.Public
 		IsCA:                  cfg.IsCA,
 	}
 	if cfg.Host != "" {
-		template.DNSNames = []string{cfg.Host}
+		names := strings.Split(cfg.Host, ",")
+		template.DNSNames = make([]string, 0)
+		template.IPAddresses = make([]net.IP, 0)
+		for _, name := range names {
+			name = strings.TrimSpace(name)
+			if name == "" {
+				continue
+			}
+			// check if the hostname is an IP address
+			addr := net.ParseIP(name)
+			if addr == nil {
+				template.DNSNames = append(template.DNSNames, name)
+			} else {
+				template.IPAddresses = append(template.IPAddresses, addr)
+			}
+		}
 	}
 	if parent == nil {
 		parent = &template
