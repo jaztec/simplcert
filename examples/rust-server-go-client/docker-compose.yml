@@ -1,0 +1,15 @@
+version: "3.9"
+
+services:
+  server:
+    build:
+      context: server/.
+      target: server_service
+
+  client:
+    build:
+      context: client/.
+      target: client_service
+    links:
+      - server
+
